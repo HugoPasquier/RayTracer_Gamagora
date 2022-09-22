@@ -1,0 +1,182 @@
+// RayTracer.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
+//
+
+#include <iostream>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <cmath>
+#include <algorithm>
+
+
+#define PI 3.14159265358979323846
+
+
+using namespace cv;
+using namespace std;
+
+struct vec3
+{
+    float x, y, z;
+
+    vec3 operator*(const float f) const
+    {
+        return vec3{ x * f, y * f, z * f };
+    }
+
+    vec3 operator/(const float f) const
+    {
+        return vec3{ x / f, y / f, z / f };
+    }
+
+    vec3 operator*(const vec3 v) const
+    {
+        return vec3{ x * v.x, y * v.y, z * v.z };
+    }
+
+    vec3 operator+(const vec3 v) const
+    {
+        return vec3{ x + v.x, y + v.y, z + v.z };
+    }
+
+    vec3 operator-(const vec3 v) const 
+    {
+        return vec3{ x - v.x, y - v.y, z - v.z };
+    }
+
+    float normSquared() const
+    {
+        return x * x + y * y + z * z;
+    }
+
+    vec3 unitVector() const
+    {
+        const float norm = std::sqrt(normSquared());
+        return vec3{ x / norm, y / norm, z / norm };
+    }
+
+    float dot(vec3 v) {
+        return (x * v.x) + (y * v.y) + (z * v.z);
+    }
+};
+
+struct Ray
+{
+    vec3 origin;
+    vec3 direction;
+};
+
+struct Sphere
+{
+    vec3 center;
+    float radius;
+    vec3 color;
+    float albedo;
+};
+
+struct PointLight 
+{
+    vec3 position;
+    vec3 color;
+    float intensity;
+};
+
+float intersect(const Ray& r, Sphere s)
+{                // returns distance, 0 if nohit
+    vec3 op = s.center - r.origin;        // Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
+    float t;
+    float eps = 1e-4; 
+    float b = op.dot(r.direction);
+    float det = b * b - op.dot(op) + s.radius * s.radius;
+    if (det < 0)
+        return 0;
+    else
+        det = sqrt(det);
+    return (t = b - det) > eps ? t : ((t = b + det) > eps ? t : 0);
+}
+
+int main()
+{
+    
+    Mat image = Mat::zeros(500, 500, CV_8UC3);
+    
+    Vec3b background_color = Vec3b(0, 0, 0);
+    Vec3b sphere_color = Vec3b(0, 0, 255);
+
+    Sphere scene[6];
+    scene[0] = { {250, 180, 0}, 50, {0, 0, 255}, 1 };
+    scene[1] = { {250, 320, 0}, 50, {0, 0, 255}, 1 };
+    scene[2] = { {250, -1350, 0}, 1500, {200, 200, 200}, 0.1 };
+    scene[3] = { {250, 1850, 0}, 1500, {200, 200, 200}, 0.1 };
+    scene[4] = { {250, 250, 1850}, 1500, {200, 100, 100}, 0.1 };
+    scene[5] = { {350, 250, 0}, 200, {100, 200, 100}, 0.1 };
+
+
+
+    PointLight lumiere{ {50, 50, 200} , {100, 100, 100}, 500000 };
+
+    float dist_coef = 0.01;
+    
+    // Shoot ray for each pixel
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+             
+            for (const Sphere sphere : scene) {
+
+                Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
+                float t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
+
+                Vec3b color;
+                if (t > 0) {
+
+                    vec3 x = r.origin + (r.direction * t);
+
+                    vec3 normal = (x - sphere.center).unitVector();
+                    vec3 w_o = (lumiere.position - x).unitVector();
+                    vec3 L_o = sphere.color + (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * sphere.albedo) / (lumiere.position - x).normSquared();
+
+                    // Clamp
+                    if (L_o.x > 255) {
+                        L_o.x = 255;
+                    }
+                    if (L_o.y > 255) {
+                        L_o.y = 255;
+                    }
+                    if (L_o.z > 255) {
+                        L_o.z = 255;
+                    }
+
+                    if (L_o.x < 0) {
+                        L_o.x = 0;
+                    }
+                    if (L_o.y < 0) {
+                        L_o.y = 0;
+                    }
+                    if (L_o.z < 0) {
+                        L_o.z = 0;
+                    }
+                    //cout << "b : " << L_o.x << ",g : " << L_o.y << ",r :" << L_o.z << endl;
+                    color = Vec3b(L_o.x, L_o.y, L_o.z);
+                    image.at<Vec3b>(i, j) = color;
+                    break;
+                    //color = background_color + (sphere_color * dist_coef * t) ;
+                }
+                else {
+                    color = background_color;
+                }
+
+                image.at<Vec3b>(i, j) = color;
+            }
+        }
+    }
+
+    cv::imshow("Display Window", image);
+    cv::waitKey(0);
+    
+
+
+    
+}

@@ -1,0 +1,24 @@
+﻿  RayTracer.cpp
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(91,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(112,62): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(113,61): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(114,63): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(115,59): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(121,27): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(139,101): warning C4244: 'argument' : conversion de 'double' en 'const float', perte possible de données
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(162,52): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(162,45): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(162,38): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+  RayTracer.vcxproj -> C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\x64\Debug\RayTracer.exe

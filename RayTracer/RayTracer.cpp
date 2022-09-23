@@ -12,8 +12,6 @@
 #include <algorithm>
 
 
-#define PI 3.14159265358979323846
-
 
 using namespace cv;
 using namespace std;
@@ -116,22 +114,26 @@ vec3 floatToRgb(vec3 color) {
 
 int main()
 {
+    const float PI = 3.14159265358979323846;
+
     
     Mat image = Mat::zeros(500, 500, CV_8UC3);
     
     Vec3b background_color = Vec3b(0, 0, 0);    // B, G, R
     Vec3b sphere_color = Vec3b(0, 0, 1.);
 
-    Sphere scene[2];
-    scene[0] = { {250, 320, 0}, 50, {0, 0, 1}, 1. };
-    scene[1] = { {250, 180, 0}, 50, {0, 0, 1}, 1. };
+    vector<Sphere> scene;
+    scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });
+    scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });
+    scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });
+    scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 1 });
+    scene.push_back({ {1850, 250, 1000}, 1500, {1, 1, 1}, 1 });
+    scene.push_back({ {-1350, 250, 1000}, 1500, {1, 1, 1}, 1 });
+    scene.push_back({ {250, 250, 2000}, 1500, {1, 1, 1}, 1 });
 
-    /*scene[1] = { {250, -1350, 0}, 1500, {200, 200, 200}, 0.1 };
-    scene[2] = { {250, 1850, 0}, 1500, {200, 200, 200}, 0.1 };*/
 
 
-
-    PointLight lumiere{ {50, 50, 200} , {100, 100, 100}, 2500 };
+    PointLight lumiere{ {200, 250, 200} , {100, 100, 100}, 2000 };
 
     float dist_coef = 0.01;
     
@@ -139,16 +141,19 @@ int main()
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
              
-            for (const Sphere sphere : scene) {
+            Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
+            float min_t = 100000000000000.f; // A CHANGER !!!!!!!!!!!!
+            Vec3b displayColor = background_color;
+            for (const Sphere &sphere : scene) {
 
-                Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
                 float t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
 
+
                 Vec3b color;
-                if (t > 0) {
+                if (t > 0 && t < min_t) {
+                    min_t = t;
 
                     vec3 x = r.origin + (r.direction * t);
-
                     vec3 normal = (x - sphere.center).unitVector();
                     vec3 w_o = (lumiere.position - x).unitVector();
                     vec3 L_o = sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * sphere.albedo) / (lumiere.position - x).normSquared();
@@ -161,16 +166,11 @@ int main()
 
                     L_o = floatToRgb(L_o);
                     color = Vec3b(L_o.x, L_o.y, L_o.z);
-                    image.at<Vec3b>(i, j) = color;
-                    break;
-                    //color = background_color + (sphere_color * dist_coef * t) ;
+                    displayColor = color;
                 }
-                else {
-                    color = background_color;
-                }
-
-                image.at<Vec3b>(i, j) = color;
             }
+
+            image.at<Vec3b>(i, j) = displayColor;
         }
     }
 

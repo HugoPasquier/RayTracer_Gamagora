@@ -10,6 +10,8 @@
 #include <opencv2/imgproc.hpp>
 #include <cmath>
 #include <algorithm>
+#include <optional>
+#include <functional>
 
 
 
@@ -82,7 +84,7 @@ struct PointLight
     float intensity;
 };
 
-float intersect(const Ray& r, Sphere s)
+optional<float> intersect(const Ray& r, Sphere s)
 {                // returns distance, 0 if nohit
     vec3 op = s.center - r.origin;        // Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
     float t;
@@ -123,17 +125,18 @@ int main()
     Vec3b sphere_color = Vec3b(0, 0, 1.);
 
     vector<Sphere> scene;
-    scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });
-    scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });
-    scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });
+    scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });  // Sphere Droite              
+    scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
+    scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });     
     scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 1 });
-    scene.push_back({ {1850, 250, 1000}, 1500, {1, 1, 1}, 1 });
-    scene.push_back({ {-1350, 250, 1000}, 1500, {1, 1, 1}, 1 });
-    scene.push_back({ {250, 250, 2000}, 1500, {1, 1, 1}, 1 });
+    scene.push_back({ {1850, 250, 1000}, 1500, {1, 1, 1}, 1 });       // Sol
+    scene.push_back({ {-1350, 250, 1000}, 1500, {1, 1, 1}, 1 });    // Plafond
+    scene.push_back({ {250, 250, 2700}, 1500, {1, 1, 1}, 1 });      // Arrière plan
+    //scene.push_back({ {220, 180, 10}, 30, {0, 0, 1}, 1. });
 
 
 
-    PointLight lumiere{ {200, 250, 200} , {100, 100, 100}, 2000 };
+    PointLight lumiere{ {200, 250, 200} , {100, 100, 100}, 15000 };
 
     float dist_coef = 0.01;
     
@@ -142,32 +145,76 @@ int main()
         for (int j = 0; j < image.cols; j++) {
              
             Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
-            float min_t = 100000000000000.f; // A CHANGER !!!!!!!!!!!!
-            Vec3b displayColor = background_color;
-            for (const Sphere &sphere : scene) {
 
-                float t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
+            Vec3b displayColor;
+            bool found_intersect = false;
+            float min_t;
+            Sphere min_sphere;
+            
+            for (const Sphere& sphere : scene) {
+                optional<float> t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
 
-
-                Vec3b color;
-                if (t > 0 && t < min_t) {
-                    min_t = t;
-
-                    vec3 x = r.origin + (r.direction * t);
-                    vec3 normal = (x - sphere.center).unitVector();
-                    vec3 w_o = (lumiere.position - x).unitVector();
-                    vec3 L_o = sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * sphere.albedo) / (lumiere.position - x).normSquared();
-
-                    L_o.x = clamp(L_o.x, 0, 1);
-                    L_o.y = clamp(L_o.y, 0, 1);
-                    L_o.z = clamp(L_o.z, 0, 1);
-                 
-                    //cout << "b : " << L_o.x << ",g : " << L_o.y << ",r :" << L_o.z << endl;
-
-                    L_o = floatToRgb(L_o);
-                    color = Vec3b(L_o.x, L_o.y, L_o.z);
-                    displayColor = color;
+                if (t) {
+                    float t_val = t.value();
+                    if (!found_intersect) {
+                        min_t = t_val;
+                        min_sphere = sphere;
+                        found_intersect = true;
+                    }
+                    else {
+                        if (t_val < min_t) {
+                            min_t = t_val;
+                            min_sphere = sphere;
+                        }
+                    }
                 }
+            }
+
+            if (found_intersect) {
+                bool ombre = false;
+                Vec3b color;
+                
+                vec3 x = r.origin + (r.direction * min_t);
+                vec3 normal = (x - min_sphere.center).unitVector();
+                vec3 w_o = (lumiere.position - x).unitVector();
+
+               //// Ombres
+               //float ligthDistance = (lumiere.position - x).normSquared();
+
+               //float epsilon = pow(10, -4);
+               //for (const Sphere& sphere_ombre : scene) {
+               //    vec3 new_x = x + w_o * epsilon;
+               //    optional<float> t_ombre = intersect({ new_x, w_o }, sphere_ombre);
+
+               //    if (t_ombre && t_ombre.value() > 0) {
+               //    vec3 x_ombre = x + (w_o * *t_ombre);
+               //    float ombreDistance = (x_ombre - x).normSquared();
+               //    float normEps = 0.999999f;
+
+               //        if (ombreDistance * normEps < ligthDistance * normEps) {
+               //             ombre = true;
+               //             break;
+               //        }
+               //    }
+               //}
+
+               if (!ombre) {
+                   // Calcul de l'éclairage s'il n'y a pas d'ombres
+                   vec3 L_o = min_sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * min_sphere.albedo) / (lumiere.position - x).normSquared();
+
+                   L_o.x = clamp(L_o.x, 0, 1);
+                   L_o.y = clamp(L_o.y, 0, 1);
+                   L_o.z = clamp(L_o.z, 0, 1);
+
+                   //cout << "b : " << L_o.x << ",g : " << L_o.y << ",r :" << L_o.z << endl;
+
+                   L_o = floatToRgb(L_o);
+                   color = Vec3b(L_o.x, L_o.y, L_o.z);
+                   displayColor = color;
+               }       
+            }
+            else {
+                displayColor = background_color;
             }
 
             image.at<Vec3b>(i, j) = displayColor;

@@ -98,25 +98,40 @@ float intersect(const Ray& r, Sphere s)
     return (t = b - det) > eps ? t : ((t = b + det) > eps ? t : 0);
 }
 
+float clamp(float v, float min, float max) {
+    if (v > max) return max;
+    if (v < min) return min;
+    return v;
+}
+
+vec3 floatToRgb(vec3 color) {
+    vec3 rgbColor;
+    rgbColor.x = color.x * 255;
+    rgbColor.y = color.y * 255;
+    rgbColor.z = color.z * 255;
+
+    return rgbColor;
+}
+
+
 int main()
 {
     
     Mat image = Mat::zeros(500, 500, CV_8UC3);
     
-    Vec3b background_color = Vec3b(0, 0, 0);
-    Vec3b sphere_color = Vec3b(0, 0, 255);
+    Vec3b background_color = Vec3b(0, 0, 0);    // B, G, R
+    Vec3b sphere_color = Vec3b(0, 0, 1.);
 
-    Sphere scene[6];
-    scene[0] = { {250, 180, 0}, 50, {0, 0, 255}, 1 };
-    scene[1] = { {250, 320, 0}, 50, {0, 0, 255}, 1 };
-    scene[2] = { {250, -1350, 0}, 1500, {200, 200, 200}, 0.1 };
-    scene[3] = { {250, 1850, 0}, 1500, {200, 200, 200}, 0.1 };
-    scene[4] = { {250, 250, 1850}, 1500, {200, 100, 100}, 0.1 };
-    scene[5] = { {350, 250, 0}, 200, {100, 200, 100}, 0.1 };
+    Sphere scene[2];
+    scene[0] = { {250, 320, 0}, 50, {0, 0, 1}, 1. };
+    scene[1] = { {250, 180, 0}, 50, {0, 0, 1}, 1. };
 
+    /*scene[1] = { {250, -1350, 0}, 1500, {200, 200, 200}, 0.1 };
+    scene[2] = { {250, 1850, 0}, 1500, {200, 200, 200}, 0.1 };*/
 
 
-    PointLight lumiere{ {50, 50, 200} , {100, 100, 100}, 500000 };
+
+    PointLight lumiere{ {50, 50, 200} , {100, 100, 100}, 2500 };
 
     float dist_coef = 0.01;
     
@@ -136,29 +151,15 @@ int main()
 
                     vec3 normal = (x - sphere.center).unitVector();
                     vec3 w_o = (lumiere.position - x).unitVector();
-                    vec3 L_o = sphere.color + (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * sphere.albedo) / (lumiere.position - x).normSquared();
+                    vec3 L_o = sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * sphere.albedo) / (lumiere.position - x).normSquared();
 
-                    // Clamp
-                    if (L_o.x > 255) {
-                        L_o.x = 255;
-                    }
-                    if (L_o.y > 255) {
-                        L_o.y = 255;
-                    }
-                    if (L_o.z > 255) {
-                        L_o.z = 255;
-                    }
-
-                    if (L_o.x < 0) {
-                        L_o.x = 0;
-                    }
-                    if (L_o.y < 0) {
-                        L_o.y = 0;
-                    }
-                    if (L_o.z < 0) {
-                        L_o.z = 0;
-                    }
+                    L_o.x = clamp(L_o.x, 0, 1);
+                    L_o.y = clamp(L_o.y, 0, 1);
+                    L_o.z = clamp(L_o.z, 0, 1);
+                 
                     //cout << "b : " << L_o.x << ",g : " << L_o.y << ",r :" << L_o.z << endl;
+
+                    L_o = floatToRgb(L_o);
                     color = Vec3b(L_o.x, L_o.y, L_o.z);
                     image.at<Vec3b>(i, j) = color;
                     break;

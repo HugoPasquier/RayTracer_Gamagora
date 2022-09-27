@@ -113,6 +113,168 @@ vec3 floatToRgb(vec3 color) {
     return rgbColor;
 }
 
+void generateSphere(vector<Sphere> &scene, float spaceBtw, float radius, vec3 centerPosition, int nbSpheres) {
+    vec3 minPoint = { centerPosition.x - ((nbSpheres / 2.) * (spaceBtw)),
+                    centerPosition.y - ((nbSpheres / 2.) * (spaceBtw)),
+                    centerPosition.z - ((nbSpheres / 2.) * (spaceBtw)) };
+    
+    for (int i = 0; i < nbSpheres; i++) {
+        for (int j = 0; j < nbSpheres; j++) {
+            for (int k = 0; k < nbSpheres; k++) {
+                scene.push_back({ {minPoint.x + i * spaceBtw, minPoint.y + j * spaceBtw, minPoint.z + k * spaceBtw}, radius, {0, 0, 0.8}, 1. });
+                //cout << "Debug Position : " << i * spaceBtw << ", " << j * spaceBtw << ", " << k * spaceBtw << endl;
+            }
+        }
+    }
+}
+
+// --- Octree ---
+struct treeNode
+{
+    vec3 minPoint;
+    vec3 maxPoint;
+    vector<int> objectsId;
+    treeNode * leftSon;
+    treeNode * rightSon;
+
+    bool isInBox(vec3 p) {
+        return p.x <= maxPoint.x && p.y <= maxPoint.y && p.z <= maxPoint.z && p.x >= minPoint.x && p.y >= minPoint.y && p.z >= minPoint.z;
+    }
+
+    treeNode initTree(vector<Sphere> &scene) {
+        
+        bool firstObject = true;
+        vec3 minP;
+        vec3 maxP;
+
+        for (const Sphere& sphere : scene) {
+            if (firstObject) {
+                minP = sphere.center;
+                maxP = sphere.center;
+                firstObject = false;
+            }
+            else{
+                if (sphere.center.x < minP.x) {
+                    minP.x = sphere.center.x;
+                }
+                if (sphere.center.y < minP.y) {
+                    minP.y = sphere.center.y;
+                }
+                if (sphere.center.z < minP.z) {
+                    minP.z = sphere.center.z;
+                }
+                if (sphere.center.x > maxP.x) {
+                    maxP.x = sphere.center.x;
+                }
+                if (sphere.center.y > maxP.y) {
+                    maxP.y = sphere.center.y;
+                }
+                if (sphere.center.z > maxP.z) {
+                    maxP.z = sphere.center.z;
+                }
+            }
+        }
+
+        objectsId = vector<int>();
+
+        int id_sphere = 0;
+        for (const Sphere& sphere : scene) {
+            if (isInBox(sphere.center)) {
+                objectsId.push_back(id_sphere);
+            }
+            id_sphere++;
+        }
+
+        treeNode t = { minP, maxP, objectsId, NULL, NULL };
+        return t;
+    }
+
+    void addObjectsNode(vector<Sphere> scene) {
+        int id_sphere = 0;
+        for (const Sphere& sphere : scene) {
+            if (isInBox(sphere.center)) {
+                objectsId.push_back(id_sphere);
+            }
+            id_sphere++;
+        }
+    }
+
+    void splitNode(vector<Sphere> scene) {
+        // On calcul la plus grande dimensions
+        float xLenght = maxPoint.x - minPoint.x;
+        float yLenght = maxPoint.y - maxPoint.y;
+        float zLenght = maxPoint.z - maxPoint.z;
+
+        vec3 leftSonMaxPoint = maxPoint;
+        vec3 rightSonMinPoint = minPoint;
+
+        if (xLenght > yLenght && xLenght > zLenght) { // X
+            float cutValue = xLenght / 2.;
+            leftSonMaxPoint.x = minPoint.x + cutValue;
+            rightSonMinPoint.x = minPoint.x + cutValue;
+        }
+        else if (yLenght > xLenght && yLenght > zLenght) {  // Y
+            float cutValue = yLenght / 2.;
+            leftSonMaxPoint.y = minPoint.y + cutValue;
+            rightSonMinPoint.y = minPoint.y + cutValue;
+        }
+        else {  // Z
+            float cutValue = zLenght / 2.;
+            leftSonMaxPoint.z = minPoint.z + cutValue;
+            rightSonMinPoint.z = minPoint.z + cutValue;
+        }
+       
+        // On initialise les enfants
+        treeNode *leftSon = new treeNode{ minPoint, leftSonMaxPoint, vector<int>(), NULL, NULL };
+        treeNode *rightSon = new treeNode{ rightSonMinPoint, maxPoint, vector<int>(), NULL, NULL };
+
+        leftSon->addObjectsNode(scene);
+        rightSon->addObjectsNode(scene);
+
+        this->leftSon = leftSon;
+        this->rightSon = rightSon;
+    }
+
+    bool intersect(const Ray& r) const
+    {
+        float tmin = (minPoint.x - r.origin.x) / r.direction.x;
+        float tmax = (maxPoint.x - r.origin.x) / r.direction.x;
+
+        if (tmin > tmax) swap(tmin, tmax);
+
+        float tymin = (minPoint.y - r.origin.y) / r.direction.y;
+        float tymax = (maxPoint.y - r.origin.y) / r.direction.y;
+
+        if (tymin > tymax) swap(tymin, tymax);
+
+        if ((tmin > tymax) || (tymin > tmax))
+            return false;
+
+        if (tymin > tmin)
+            tmin = tymin;
+
+        if (tymax < tmax)
+            tmax = tymax;
+
+        float tzmin = (minPoint.z - r.origin.z) / r.direction.z;
+        float tzmax = (maxPoint.z - r.origin.z) / r.direction.z;
+
+        if (tzmin > tzmax) swap(tzmin, tzmax);
+
+        if ((tmin > tzmax) || (tzmin > tmax))
+            return false;
+
+        if (tzmin > tmin)
+            tmin = tzmin;
+
+        if (tzmax < tmax)
+            tmax = tzmax;
+
+        return true;
+    }
+};
+
+
 
 int main()
 {
@@ -124,19 +286,27 @@ int main()
     Vec3b background_color = Vec3b(0, 0, 0);    // B, G, R
     Vec3b sphere_color = Vec3b(0, 0, 1.);
 
+    // --- Scene ---
     vector<Sphere> scene;
-    scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });  // Sphere Droite              
-    scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
-    scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });     
-    scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 1 });
-    scene.push_back({ {1850, 250, 1000}, 1500, {1, 1, 1}, 1 });       // Sol
-    scene.push_back({ {-1350, 250, 1000}, 1500, {1, 1, 1}, 1 });    // Plafond
-    scene.push_back({ {250, 250, 2700}, 1500, {1, 1, 1}, 1 });      // Arrière plan
+    //scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });  // Sphere Droite              
+    //scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
+    //scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });     
+    //scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 1 });
+    //scene.push_back({ {1650, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 1 });       // Sol
+    //scene.push_back({ {-1350, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 1 });    // Plafond
+    //scene.push_back({ {250, 250, 2000}, 1500, {0.5, 0.5, 0.5}, 1 });      // Arrière plan
     //scene.push_back({ {220, 180, 10}, 30, {0, 0, 1}, 1. });
 
+    // Generation de sphere
+    generateSphere(scene, 100, 25, { -10, 250, 1000 }, 10);
+    cout << "Nombre d'elements dans la scene : " << scene.size() << endl;
 
+    // Tree
+    treeNode tree;
+    tree.initTree(scene);
+    tree.splitNode(scene);
 
-    PointLight lumiere{ {200, 250, 200} , {100, 100, 100}, 15000 };
+    PointLight lumiere{ {200, 250, 0} , {100, 100, 100}, 5000000000 };
 
     float dist_coef = 0.01;
     
@@ -151,10 +321,11 @@ int main()
             float min_t;
             Sphere min_sphere;
             
+
             for (const Sphere& sphere : scene) {
                 optional<float> t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
 
-                if (t) {
+                if (t.value() > 0) {
                     float t_val = t.value();
                     if (!found_intersect) {
                         min_t = t_val;
@@ -178,25 +349,25 @@ int main()
                 vec3 normal = (x - min_sphere.center).unitVector();
                 vec3 w_o = (lumiere.position - x).unitVector();
 
-               //// Ombres
-               //float ligthDistance = (lumiere.position - x).normSquared();
+               // Ombres
+               float ligthDistance = (lumiere.position - x).normSquared();
 
-               //float epsilon = pow(10, -4);
-               //for (const Sphere& sphere_ombre : scene) {
-               //    vec3 new_x = x + w_o * epsilon;
-               //    optional<float> t_ombre = intersect({ new_x, w_o }, sphere_ombre);
+               float epsilon = pow(10, -4);
+               for (const Sphere& sphere_ombre : scene) {
+                   vec3 new_x = x + w_o * epsilon;
+                   optional<float> t_ombre = intersect({ new_x, w_o }, sphere_ombre);
 
-               //    if (t_ombre && t_ombre.value() > 0) {
-               //    vec3 x_ombre = x + (w_o * *t_ombre);
-               //    float ombreDistance = (x_ombre - x).normSquared();
-               //    float normEps = 0.999999f;
+                   if (t_ombre && t_ombre.value() > 0) {
+                   vec3 x_ombre = x + (w_o * *t_ombre);
+                   float ombreDistance = (x_ombre - x).normSquared();
+                   float normEps = 0.999999f;
 
-               //        if (ombreDistance * normEps < ligthDistance * normEps) {
-               //             ombre = true;
-               //             break;
-               //        }
-               //    }
-               //}
+                       if (ombreDistance * normEps < ligthDistance * normEps) {
+                            ombre = true;
+                            break;
+                       }
+                   }
+               }
 
                if (!ombre) {
                    // Calcul de l'éclairage s'il n'y a pas d'ombres

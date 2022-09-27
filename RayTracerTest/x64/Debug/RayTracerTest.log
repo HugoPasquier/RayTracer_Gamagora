@@ -1,0 +1,3 @@
+﻿  RayTracerTest.cpp
+  The contents of <optional> are available only with C++17 or later.
+C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(5,10): fatal error C1083: Impossible d'ouvrir le fichier include : 'opencv2/core.hpp' : No such file or directory

@@ -8,7 +8,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <cmath>
 #include <algorithm>
 #include <optional>
 #include <functional>
@@ -67,6 +66,7 @@ struct Ray
 {
     vec3 origin;
     vec3 direction;
+    int maxRecursion = 2;
 };
 
 struct Sphere
@@ -276,117 +276,147 @@ struct treeNode
 
 
 
+struct RayTracer {
+
+    const float PI = 3.14159265358979323846;
+    vector<Sphere> scene;
+    PointLight lumiere;
+
+    Vec3b processIntersection(Ray r, Vec3b background_color) {
+
+        Vec3b displayColor;
+        bool found_intersect = false;
+        float min_t;
+        Sphere min_sphere;
+        float epsilon = pow(10, -4);
+
+
+        for (const Sphere& sphere : scene) {
+            optional<float> t = intersect({ r.origin , {0, 0, 1} }, sphere);
+
+            if (t.value() > 0) {
+                float t_val = t.value();
+                if (!found_intersect) {
+                    min_t = t_val;
+                    min_sphere = sphere;
+                    found_intersect = true;
+                }
+                else {
+                    if (t_val < min_t) {
+                        min_t = t_val;
+                        min_sphere = sphere;
+                    }
+                }
+            }
+        }
+
+        if (found_intersect) {
+            bool ombre = false;
+            Vec3b color;
+
+            vec3 x = r.origin + (r.direction * min_t);
+            vec3 normal = (x - min_sphere.center).unitVector();
+            vec3 w_o = (lumiere.position - x).unitVector();
+
+            if (min_sphere.albedo == 1. && r.maxRecursion > 0) {   // Cas Sphere miroir
+                //cout << " Ray max recursion = " << r.maxRecursion << endl;
+                Ray reflectRay;
+                vec3 d = (x - r.origin).unitVector();
+                float reflect_epsilon = pow(10, -6);
+
+                reflectRay.maxRecursion = r.maxRecursion;
+                reflectRay.direction = d + (normal * (-2) * normal.dot(d));
+                reflectRay.origin = x + reflectRay.direction * reflect_epsilon;
+                reflectRay.maxRecursion--;
+
+                displayColor = processIntersection(reflectRay, background_color);
+
+            }
+            else {  // Cas général
+                // Ombres
+                float ligthDistance = (lumiere.position - x).normSquared();
+
+                for (const Sphere& sphere_ombre : scene) {
+                    vec3 new_x = x + w_o * epsilon;
+                    optional<float> t_ombre = intersect({ new_x, w_o }, sphere_ombre);
+
+                    if (t_ombre && t_ombre.value() > 0) {
+                        vec3 x_ombre = x + (w_o * *t_ombre);
+                        float ombreDistance = (x_ombre - x).normSquared();
+                        float normEps = 0.999999f;
+
+                        if (ombreDistance * normEps < ligthDistance * normEps) {
+                            ombre = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!ombre) {
+                    // Calcul de l'éclairage s'il n'y a pas d'ombres
+                    vec3 L_o = min_sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI * min_sphere.albedo) / (lumiere.position - x).normSquared());
+
+                    L_o.x = clamp(L_o.x, 0, 1);
+                    L_o.y = clamp(L_o.y, 0, 1);
+                    L_o.z = clamp(L_o.z, 0, 1);
+
+                    L_o = floatToRgb(L_o);
+                    color = Vec3b(L_o.x, L_o.y, L_o.z);
+                    displayColor = color;
+                }
+            }
+        }
+        else{
+            displayColor = background_color;
+        }
+
+        return displayColor;
+    }
+
+};
+
 int main()
 {
-    const float PI = 3.14159265358979323846;
+    RayTracer rayTracer;
+    
 
-    
+
     Mat image = Mat::zeros(500, 500, CV_8UC3);
-    
+
     Vec3b background_color = Vec3b(0, 0, 0);    // B, G, R
     Vec3b sphere_color = Vec3b(0, 0, 1.);
 
     // --- Scene ---
-    vector<Sphere> scene;
-    //scene.push_back({ {300, 320, 0}, 50, {0, 0, 1}, 1. });  // Sphere Droite              
-    //scene.push_back({ {300, 180, 0}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
-    //scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 1 });     
-    //scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 1 });
-    //scene.push_back({ {1650, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 1 });       // Sol
-    //scene.push_back({ {-1350, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 1 });    // Plafond
-    //scene.push_back({ {250, 250, 2000}, 1500, {0.5, 0.5, 0.5}, 1 });      // Arrière plan
-    //scene.push_back({ {220, 180, 10}, 30, {0, 0, 1}, 1. });
+    
+    rayTracer.scene.push_back({ {300, 320, 100}, 50, {0, 0, 1}, 0.8 });  // Sphere Droite              
+    rayTracer.scene.push_back({ {300, 180, 100}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
+    rayTracer.scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 0.8 });
+    rayTracer.scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 0.8 });
+    rayTracer.scene.push_back({ {1620, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 0.8 });       // Sol
+    rayTracer.scene.push_back({ {-1350, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 0.8 });    // Plafond
+    rayTracer.scene.push_back({ {250, 250, 2000}, 1500, {0.5, 0.5, 0.5}, 0.8 });      // Arrière plan
+    rayTracer.scene.push_back({ {210, 180, 150}, 30, {0, 0, 1}, 0.6 });  // Sphere miroir
 
     // Generation de sphere
-    generateSphere(scene, 100, 25, { -10, 250, 1000 }, 10);
-    cout << "Nombre d'elements dans la scene : " << scene.size() << endl;
+    //generateSphere(scene, 100, 25, { -10, 250, 1000 }, 10);
+    cout << "Nombre d'elements dans la scene : " << rayTracer.scene.size() << endl;
 
     // Tree
     treeNode tree;
-    tree.initTree(scene);
-    tree.splitNode(scene);
+    tree.initTree(rayTracer.scene);
+    tree.splitNode(rayTracer.scene);
 
-    PointLight lumiere{ {200, 250, 0} , {100, 100, 100}, 5000000000 };
+    rayTracer.lumiere = { {200, 250, 10} , {1, 1, 1}, 300000 };
 
     float dist_coef = 0.01;
-    
+
     // Shoot ray for each pixel
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-             
+
             Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
 
-            Vec3b displayColor;
-            bool found_intersect = false;
-            float min_t;
-            Sphere min_sphere;
-            
-
-            for (const Sphere& sphere : scene) {
-                optional<float> t = intersect({ {(float)i, (float)j, 0}, {0, 0, 1} }, sphere);
-
-                if (t.value() > 0) {
-                    float t_val = t.value();
-                    if (!found_intersect) {
-                        min_t = t_val;
-                        min_sphere = sphere;
-                        found_intersect = true;
-                    }
-                    else {
-                        if (t_val < min_t) {
-                            min_t = t_val;
-                            min_sphere = sphere;
-                        }
-                    }
-                }
-            }
-
-            if (found_intersect) {
-                bool ombre = false;
-                Vec3b color;
-                
-                vec3 x = r.origin + (r.direction * min_t);
-                vec3 normal = (x - min_sphere.center).unitVector();
-                vec3 w_o = (lumiere.position - x).unitVector();
-
-               // Ombres
-               float ligthDistance = (lumiere.position - x).normSquared();
-
-               float epsilon = pow(10, -4);
-               for (const Sphere& sphere_ombre : scene) {
-                   vec3 new_x = x + w_o * epsilon;
-                   optional<float> t_ombre = intersect({ new_x, w_o }, sphere_ombre);
-
-                   if (t_ombre && t_ombre.value() > 0) {
-                   vec3 x_ombre = x + (w_o * *t_ombre);
-                   float ombreDistance = (x_ombre - x).normSquared();
-                   float normEps = 0.999999f;
-
-                       if (ombreDistance * normEps < ligthDistance * normEps) {
-                            ombre = true;
-                            break;
-                       }
-                   }
-               }
-
-               if (!ombre) {
-                   // Calcul de l'éclairage s'il n'y a pas d'ombres
-                   vec3 L_o = min_sphere.color * (lumiere.color * lumiere.intensity * (normal.dot(w_o) / PI) * min_sphere.albedo) / (lumiere.position - x).normSquared();
-
-                   L_o.x = clamp(L_o.x, 0, 1);
-                   L_o.y = clamp(L_o.y, 0, 1);
-                   L_o.z = clamp(L_o.z, 0, 1);
-
-                   //cout << "b : " << L_o.x << ",g : " << L_o.y << ",r :" << L_o.z << endl;
-
-                   L_o = floatToRgb(L_o);
-                   color = Vec3b(L_o.x, L_o.y, L_o.z);
-                   displayColor = color;
-               }       
-            }
-            else {
-                displayColor = background_color;
-            }
+            Vec3b displayColor = rayTracer.processIntersection(r, background_color);
 
             image.at<Vec3b>(i, j) = displayColor;
         }
@@ -394,8 +424,4 @@ int main()
 
     cv::imshow("Display Window", image);
     cv::waitKey(0);
-    
-
-
-    
 }

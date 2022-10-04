@@ -345,17 +345,20 @@ struct RayTracer {
                 Ray refractRay;
                 refractRay.maxRecursion = r.maxRecursion;
                 refractRay.origin = reflectRay.origin;
-                float eta = 1.5; // coef du verre
-                float k = 1.0 - eta * eta * (1.0 - normal.dot(d) * normal.dot(d));
+                float etaA = 1.5;   // coef du verre
+                float etaB = 1;     // coef du milieu
+
+                float k = 1.0 - etaA * etaA * (1.0 - normal.dot(d) * normal.dot(d));
                 if (k > 0.0) {
-                    refractRay.direction = d * eta - normal * (eta * normal.dot(d) + sqrt(k));
+                    refractRay.direction = (d * etaA - normal * (etaA * normal.dot(d) + sqrt(k))).unitVector();
+                    refractRay.maxRecursion--;
+                    displayColor = processIntersection(refractRay, background_color) * 0.8 + processIntersection(reflectRay, background_color) * 0.2;
                 }
                 else {
-                    refractRay.direction = reflectRay.direction;
+                    displayColor = processIntersection(reflectRay, background_color);
                 }
-                refractRay.maxRecursion--;
+                
 
-                displayColor = processIntersection(reflectRay, background_color) + processIntersection(refractRay, background_color);
             }
             else {  // Cas général
                 // Ombres

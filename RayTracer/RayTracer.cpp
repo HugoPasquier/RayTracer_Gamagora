@@ -378,13 +378,13 @@ struct RayTracer {
 int main()
 {
     RayTracer rayTracer;
-    
-
+    float camLenght = 5;
 
     Mat image = Mat::zeros(500, 500, CV_8UC3);
 
     Vec3b background_color = Vec3b(0, 0, 0);    // B, G, R
     Vec3b sphere_color = Vec3b(0, 0, 1.);
+
 
     // --- Scene ---
     
@@ -414,7 +414,12 @@ int main()
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
 
-            Ray r = { {(float)i, (float)j, 0}, {0, 0, 1} };
+            // Pour une camera perspective
+            vec3 rOrigin = { (float)i, (float)j, -camLenght };
+            vec3 rDir = (vec3{ (float)i, (float)j, 0 } - rOrigin).unitVector();
+           
+            
+            Ray r = { rOrigin, rDir};
 
             Vec3b displayColor = rayTracer.processIntersection(r, background_color);
 

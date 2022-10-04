@@ -66,7 +66,7 @@ struct Ray
 {
     vec3 origin;
     vec3 direction;
-    int maxRecursion = 2;
+    int maxRecursion = 10;
 };
 
 struct Sphere
@@ -288,11 +288,11 @@ struct RayTracer {
         bool found_intersect = false;
         float min_t;
         Sphere min_sphere;
-        float epsilon = pow(10, -4);
+        float epsilon = pow(10, -3);
 
 
         for (const Sphere& sphere : scene) {
-            optional<float> t = intersect({ r.origin , {0, 0, 1} }, sphere);
+            optional<float> t = intersect(r, sphere);
 
             if (t.value() > 0) {
                 float t_val = t.value();
@@ -322,7 +322,7 @@ struct RayTracer {
                 //cout << " Ray max recursion = " << r.maxRecursion << endl;
                 Ray reflectRay;
                 vec3 d = (x - r.origin).unitVector();
-                float reflect_epsilon = pow(10, -6);
+                float reflect_epsilon = pow(10, -3);
 
                 reflectRay.maxRecursion = r.maxRecursion;
                 reflectRay.direction = d + (normal * (-2) * normal.dot(d));
@@ -331,6 +331,31 @@ struct RayTracer {
 
                 displayColor = processIntersection(reflectRay, background_color);
 
+            }
+            else if (min_sphere.albedo == 0. && r.maxRecursion > 0) {
+                Ray reflectRay;
+                vec3 d = (x - r.origin).unitVector();
+                float reflect_epsilon = pow(10, -3);
+
+                reflectRay.maxRecursion = r.maxRecursion;
+                reflectRay.direction = d + (normal * (-2) * normal.dot(d));
+                reflectRay.origin = x + reflectRay.direction * reflect_epsilon;
+                reflectRay.maxRecursion--;
+
+                Ray refractRay;
+                refractRay.maxRecursion = r.maxRecursion;
+                refractRay.origin = reflectRay.origin;
+                float eta = 1.5; // coef du verre
+                float k = 1.0 - eta * eta * (1.0 - normal.dot(d) * normal.dot(d));
+                if (k > 0.0) {
+                    refractRay.direction = d * eta - normal * (eta * normal.dot(d) + sqrt(k));
+                }
+                else {
+                    refractRay.direction = reflectRay.direction;
+                }
+                refractRay.maxRecursion--;
+
+                displayColor = processIntersection(reflectRay, background_color) + processIntersection(refractRay, background_color);
             }
             else {  // Cas général
                 // Ombres
@@ -388,14 +413,14 @@ int main()
 
     // --- Scene ---
     
-    rayTracer.scene.push_back({ {300, 320, 100}, 50, {0, 0, 1}, 0.8 });  // Sphere Droite              
-    rayTracer.scene.push_back({ {300, 180, 100}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
+    rayTracer.scene.push_back({ {250, 320, 150}, 50, {0, 0, 1}, 0. });  // Sphere Droite              
+    rayTracer.scene.push_back({ {250, 180, 150}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
     rayTracer.scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 0.8 });
     rayTracer.scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 0.8 });
     rayTracer.scene.push_back({ {1620, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 0.8 });       // Sol
     rayTracer.scene.push_back({ {-1350, 250, 1000}, 1500, {0.5, 0.5, 0.5}, 0.8 });    // Plafond
-    rayTracer.scene.push_back({ {250, 250, 2000}, 1500, {0.5, 0.5, 0.5}, 0.8 });      // Arrière plan
-    rayTracer.scene.push_back({ {210, 180, 150}, 30, {0, 0, 1}, 0.6 });  // Sphere miroir
+    rayTracer.scene.push_back({ {250, 250, 1950}, 1500, {0.5, 0.5, 0.5}, 0.8 });      // Arrière plan
+    //rayTracer.scene.push_back({ {150, 250, 150}, 30, {0, 0, 1}, 0.6 });  // Sphere miroir
 
     // Generation de sphere
     //generateSphere(scene, 100, 25, { -10, 250, 1000 }, 10);

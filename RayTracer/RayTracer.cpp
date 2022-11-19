@@ -11,86 +11,11 @@
 #include <algorithm>
 #include <optional>
 #include <functional>
+#include "RayTracer.h"
 
 
 using namespace cv;
 using namespace std;
-
-struct vec3
-{
-    float x, y, z;
-
-    vec3 operator*(const float f) const
-    {
-        return vec3{ x * f, y * f, z * f };
-    }
-
-    bool operator==(const vec3 v) const
-    {
-        return (x == v.x && y == v.y && z == v.z);
-    }
-
-    vec3 operator/(const float f) const
-    {
-        return vec3{ x / f, y / f, z / f };
-    }
-
-    string ToString(vec3 &) const {
-        return to_string(x) + to_string(y) + to_string(z);
-    }
-
-    vec3 operator*(const vec3 v) const
-    {
-        return vec3{ x * v.x, y * v.y, z * v.z };
-    }
-
-    vec3 operator+(const vec3 v) const
-    {
-        return vec3{ x + v.x, y + v.y, z + v.z };
-    }
-
-    vec3 operator-(const vec3 v) const 
-    {
-        return vec3{ x - v.x, y - v.y, z - v.z };
-    }
-
-    float normSquared() const
-    {
-        return x * x + y * y + z * z;
-    }
-
-    vec3 unitVector() const
-    {
-        const float norm = std::sqrt(normSquared());
-        return vec3{ x / norm, y / norm, z / norm };
-    }
-
-    float dot(vec3 v) {
-        return (x * v.x) + (y * v.y) + (z * v.z);
-    }
-};
-
-struct Ray
-{
-    vec3 origin;
-    vec3 direction;
-    int maxRecursion = 10;
-};
-
-struct Sphere
-{
-    vec3 center;
-    float radius;
-    vec3 color;
-    float albedo;
-};
-
-struct PointLight 
-{
-    vec3 position;
-    vec3 color;
-    float intensity;
-};
 
 optional<float> intersect(const Ray& r, Sphere s)
 {                // returns distance 0 if nohit

@@ -1,50 +1,50 @@
 ﻿  RayTracer.cpp
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(99,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(206,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(211,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(216,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(275,17): warning C4305: 'initialisation' : troncation de 'double' à 'const float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(285,23): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(319,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(332,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(345,25): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(386,52): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(24,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(131,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(136,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(141,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(200,17): warning C4305: 'initialisation' : troncation de 'double' à 'const float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(210,23): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(244,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(257,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(270,25): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(311,52): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
           with
           [
               _Tp=uchar
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(386,45): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(311,45): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
           with
           [
               _Tp=uchar
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(386,38): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(311,38): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
           with
           [
               _Tp=uchar
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(408,38): warning C4244: 'argument' : conversion de 'double' en '_Tp', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(333,38): warning C4244: 'argument' : conversion de 'double' en '_Tp', perte possible de données
           with
           [
               _Tp=uchar
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(415,74): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(416,75): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(417,80): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(418,81): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(419,79): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(433,27): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(340,74): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(341,75): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(342,80): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(343,81): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(344,79): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(358,27): warning C4305: 'initialisation' : troncation de 'double' à 'float'
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\optional(83,17): warning C4244: 'initialisation' : conversion de '_Ty' en 'float', perte possible de données
           with
           [
               _Ty=int
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(455,1): message : voir la référence à l'instanciation de la fonction modèle 'std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&) noexcept' en cours de compilation
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(380,1): message : voir la référence à l'instanciation de la fonction modèle 'std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&) noexcept' en cours de compilation
           with
           [
               _Ty=float
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(455,1): message : voir la référence à l'instanciation de la fonction modèle 'std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&) noexcept' en cours de compilation
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(380,1): message : voir la référence à l'instanciation de la fonction modèle 'std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&) noexcept' en cours de compilation
           with
           [
               _Ty=float
@@ -59,12 +59,12 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.3193
           [
               _Ty=float
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(103,9): message : voir la référence à l'instanciation de la fonction modèle 'std::optional<float>::optional<int,0>(_Ty2 &&) noexcept' en cours de compilation
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(28,9): message : voir la référence à l'instanciation de la fonction modèle 'std::optional<float>::optional<int,0>(_Ty2 &&) noexcept' en cours de compilation
           with
           [
               _Ty2=int
           ]
-C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(103,9): message : voir la référence à l'instanciation de la fonction modèle 'std::optional<float>::optional<int,0>(_Ty2 &&) noexcept' en cours de compilation
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\RayTracer.cpp(28,9): message : voir la référence à l'instanciation de la fonction modèle 'std::optional<float>::optional<int,0>(_Ty2 &&) noexcept' en cours de compilation
           with
           [
               _Ty2=int

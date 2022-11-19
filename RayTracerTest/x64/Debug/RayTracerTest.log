@@ -1,3 +1,51 @@
 ﻿  RayTracerTest.cpp
-  The contents of <optional> are available only with C++17 or later.
-C:\Users\hupasquier\Documents\03 - Synhèse d'Image\RayTracer\RayTracer\RayTracer.cpp(5,10): fatal error C1083: Impossible d'ouvrir le fichier include : 'opencv2/core.hpp' : No such file or directory
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(99,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(206,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(211,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(216,28): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(275,17): warning C4305: 'initialisation' : troncation de 'double' à 'const float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(285,23): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(319,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(332,39): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(345,25): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(386,52): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(386,45): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(386,38): warning C4244: 'argument' : conversion de 'float' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(408,38): warning C4244: 'argument' : conversion de 'double' en '_Tp', perte possible de données
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(415,74): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(416,75): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(417,80): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(418,81): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(419,79): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracer\Raytracer.cpp(433,27): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracerTest\RayTracerTest.cpp(17,1): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracerTest\RayTracerTest.cpp(18,1): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracerTest\RayTracerTest.cpp(20,1): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\UnitTest\include\CppUnitTestAssert.h(67,81): error C2338: static_assert failed: 'Test writer must define specialization of ToString<const Q& q> for your class class std::basic_string<wchar_t,struct std::char_traits<wchar_t>,class std::allocator<wchar_t> > __cdecl Microsoft::VisualStudio::CppUnitTestFramework::ToString<struct vec3>(const struct vec3 &).'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\UnitTest\include\CppUnitTestAssert.h(140,1): message : voir la référence à l'instanciation de la fonction modèle 'std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<T>(const Q &)' en cours de compilation
+          with
+          [
+              T=vec3,
+              Q=vec3
+          ]
+C:\Users\hugop\Documents\01 - Gamagora\04 - Synthése d'images\RayTracer_Gamagora\RayTracerTest\RayTracerTest.cpp(22,1): message : voir la référence à l'instanciation de la fonction modèle 'void Microsoft::VisualStudio::CppUnitTestFramework::Assert::AreEqual<vec3>(const T &,const T &,const wchar_t *,const Microsoft::VisualStudio::CppUnitTestFramework::__LineInfo *)' en cours de compilation
+          with
+          [
+              T=vec3
+          ]

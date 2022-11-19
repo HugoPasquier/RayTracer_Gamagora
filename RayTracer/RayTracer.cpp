@@ -13,7 +13,6 @@
 #include <functional>
 
 
-
 using namespace cv;
 using namespace std;
 
@@ -26,9 +25,18 @@ struct vec3
         return vec3{ x * f, y * f, z * f };
     }
 
+    bool operator==(const vec3 v) const
+    {
+        return (x == v.x && y == v.y && z == v.z);
+    }
+
     vec3 operator/(const float f) const
     {
         return vec3{ x / f, y / f, z / f };
+    }
+
+    string ToString(vec3 &) const {
+        return to_string(x) + to_string(y) + to_string(z);
     }
 
     vec3 operator*(const vec3 v) const
@@ -85,7 +93,7 @@ struct PointLight
 };
 
 optional<float> intersect(const Ray& r, Sphere s)
-{                // returns distance, 0 if nohit
+{                // returns distance 0 if nohit
     vec3 op = s.center - r.origin;        // Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
     float t;
     float eps = 1e-4; 
@@ -113,20 +121,6 @@ vec3 floatToRgb(vec3 color) {
     return rgbColor;
 }
 
-void generateSphere(vector<Sphere> &scene, float spaceBtw, float radius, vec3 centerPosition, int nbSpheres) {
-    vec3 minPoint = { centerPosition.x - ((nbSpheres / 2.) * (spaceBtw)),
-                    centerPosition.y - ((nbSpheres / 2.) * (spaceBtw)),
-                    centerPosition.z - ((nbSpheres / 2.) * (spaceBtw)) };
-    
-    for (int i = 0; i < nbSpheres; i++) {
-        for (int j = 0; j < nbSpheres; j++) {
-            for (int k = 0; k < nbSpheres; k++) {
-                scene.push_back({ {minPoint.x + i * spaceBtw, minPoint.y + j * spaceBtw, minPoint.z + k * spaceBtw}, radius, {0, 0, 0.8}, 1. });
-                //cout << "Debug Position : " << i * spaceBtw << ", " << j * spaceBtw << ", " << k * spaceBtw << endl;
-            }
-        }
-    }
-}
 
 // --- Octree ---
 struct treeNode
@@ -416,7 +410,7 @@ int main()
 
     // --- Scene ---
     
-    rayTracer.scene.push_back({ {250, 320, 150}, 50, {0, 0, 1}, 0. });  // Sphere Droite              
+    rayTracer.scene.push_back({ {250, 320, 150}, 50, {0, 0, 1}, 1. });  // Sphere Droite              
     rayTracer.scene.push_back({ {250, 180, 150}, 50, {0, 0, 1}, 1. });  // Sphere Gauche
     rayTracer.scene.push_back({ {250, 1850, 1000}, 1500, {1, 0, 0}, 0.8 });
     rayTracer.scene.push_back({ {250, -1350, 1000}, 1500, {0, 1, 0}, 0.8 });

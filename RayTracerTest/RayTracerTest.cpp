@@ -1,39 +1,29 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include <cmath>
-#include <algorithm>
-#include <optional>
-#include <functional>
-#include "../RayTracer/RayTracer.cpp"
+#include "../RayTracer/Raytracer.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace RayTracerTest
 {
-
-	TEST_CLASS(TestVec3)
-	{
-	public:
-
-		TEST_METHOD(normSquaredNegativ)
-		{
-			vec3 p1 = { -5, -66, -68 };
-			vec3 p2 = { 4, -8, 9 };
-			vec3 p3 = { 0, -8, 9 };
-
-			Assert::IsTrue(p1.normSquared() >= 0);
-			Assert::IsTrue(p2.normSquared() >= 0);
-			Assert::IsTrue(p3.normSquared() >= 0);
-		}
-	};
-
-
-	TEST_CLASS(treeNode)
+	TEST_CLASS(RayTracerTest)
 	{
 	public:
 		
-		TEST_METHOD(addObjectsNode)
+		TEST_METHOD(TestVec3OperatorMult)
 		{
+			vec3 a{ 0., 0., 0. };
+			vec3 b{ 0., 0., 0. };
+			vec3 c{ 5., -1.2, 32.02 };
+			vec3 d{ -20, 51.4, 0. };
+
+			vec3 prod_c_d{ -100, -61.68, 0 };
+
+			Assert::AreEqual(a, a * b);			// Two zero vectors
+			Assert::AreEqual(b, c * b);			// One zero vector with a non one
+			Assert::AreEqual(prod_c_d, c * d);	// Two non zero vectors
+			Assert::AreEqual(prod_c_d, d * c);	// Test commutativity
+
 		}
 	};
 }

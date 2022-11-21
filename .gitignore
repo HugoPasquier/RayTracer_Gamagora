@@ -32,4 +32,11 @@
 *.app
 
 # Visual Studio
-.vs
+.vs/
+x64/
+*.user
+*.log
+*.obj
+*.pdb
+*.ilk
+*.tlog

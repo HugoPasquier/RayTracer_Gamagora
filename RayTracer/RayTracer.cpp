@@ -1,5 +1,4 @@
 // RayTracer.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
-//
 
 #include <iostream>
 #include <opencv2/core.hpp>
@@ -346,7 +345,7 @@ int main()
 
     // Generation de sphere
     //generateSphere(scene, 100, 25, { -10, 250, 1000 }, 10);
-    cout << "Nombre d'elements dans la scene : " << rayTracer.scene.size() << endl;
+    //cout << "Nombre d'elements dans la scene : " << rayTracer.scene.size() << endl;
 
     // Tree
     treeNode tree;
